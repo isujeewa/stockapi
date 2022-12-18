@@ -8,7 +8,7 @@ public class TestController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
     {
-        "abc new", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Test"
+        "docker new", "dockerBracing", "dockerChilly", "dockerCool", "dockerMild", "Warm", "Balmy", "Hot", "Sweltering", "Test"
     };
 
     private readonly ILogger<TestController> _logger;
