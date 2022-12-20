@@ -17,7 +17,7 @@ public class TestController : ControllerBase
     {
         _logger = logger;
     }
-//test
+//test2
     [HttpGet(Name = "TestForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
