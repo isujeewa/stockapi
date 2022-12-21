@@ -33,7 +33,7 @@ spec:
         app: StockX
     spec:
       imagePullSecrets:
-        - name: regkey #ecr auth secret
+        - name: regcred  #ecr auth secret
       containers:
         - name: stockapi-pod
           image: nexusvision.azurecr.io/stockapi_r:1.11 # {"$imagepolicy": "flux-system:identity"}
