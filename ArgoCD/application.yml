@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/isujeewa/StockAPIGitOps.git
+    repoURL: https://github.com/isujeewa/stockapi.git
     targetRevision: HEAD
     path: ArgoCD
   destination:
