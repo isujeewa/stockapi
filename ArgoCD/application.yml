@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/isujeewa/StockAPIGitOps.git
     targetRevision: HEAD
-    path: dev
+    path: ArgoCD
   destination:
     server: https://kubernetes.default.svc
     namespace: default
