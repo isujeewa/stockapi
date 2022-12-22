@@ -63,4 +63,4 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: StockX
+      app: StockX 
