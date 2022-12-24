@@ -21,6 +21,6 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public string Get()
     {
-      return "hellow world cc class 12:24:2022 " + DateTime.Now.ToLongDateString();
+      return "demo with buddhika 12:24:2022 " + DateTime.Now.ToLongDateString();
     }
 }
