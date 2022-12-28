@@ -40,7 +40,7 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: "200Mi" #megabytes
+              memory: "200Mi" #megabytes1
               cpu: "200m"   #.05 core
             limits:
               memory: "250Mi" #issues log file : OOM killed
