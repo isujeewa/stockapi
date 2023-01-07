@@ -21,6 +21,6 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public string Get()
     {
-      return "demo with isuru 12:24:2022 " + DateTime.Now.ToLongDateString();
+      return "demo with minidu 12:24:2022 " + DateTime.Now.ToLongDateString();
     }
 }
