@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cloudse.deployment.configCm.mapname }}
+  namespace : {{ .Values.kubernetes.releaseNamespace.namespace }}
+data:
+  {{- $db_url := printf .Values.cloudse.deployment.database.mainDB.url.url }}
+  {{- $db_username := printf .Values.cloudse.deployment.database.mainDB.username.username }}
+  {{- $db_password := printf .Values.cloudse.deployment.database.mainDB.password.password }}
+  {{- $file := .Files }}
+  {{- range $path, $byte := .Files.Glob "confs/is/repository/conf/deployment.toml" }}
+  {{- $list := $path | splitList "/" }}
+  {{- $length := len $list }}
+  {{- $last := add $length -1 }}
+  {{ index $list $last }}: |-
+    {{- range $line := $file.Lines $path }}
+      | replace "{{ DB_URL }}" $db_url | replace "{{ DB_USERNAME }}" $db_username | replace "{{ DB_PASSWORD }}" $db_password 
+    {{- end }}
+  {{- end }}

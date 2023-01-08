@@ -1,0 +1,98 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ .Values.kubernetes.prefix }}-deployment
+  namespace: {{ .Values.kubernetes.releaseNamespace.namespace }}
+spec:
+  selector:
+    matchLabels:
+      deployment: cloudse
+  replicas: {{ .Values.cloudse.deployment.spec.replicas }}
+  template:
+    metadata:
+      labels:
+        deployment: cloudse
+    spec:
+      containers:
+        - name: cloud-stock-exchange
+          {{- $reg := "" }}
+          {{- $image := "" }}
+          {{- $tag := "" }}
+          {{ if (.Values.cloudse.deployment.imagePull.privateRegistry.enabled) }}
+            {{ if and (.Values.cloudse.deployment.imagePull.privateRegistry.dockerRegistry)
+               (not ( eq .Values.cloudse.deployment.imagePull.privateRegistry.dockerRegistry ""))
+               (.Values.cloudse.deployment.imagePull.privateRegistry.imageName)
+               (not ( eq .Values.cloudse.deployment.imagePull.privateRegistry.imageName ""))
+               (.Values.cloudse.deployment.imagePull.privateRegistry.imageTag)
+               (not ( eq .Values.cloudse.deployment.imagePull.privateRegistry.imageTag ""))
+            }}
+              {{- $reg = .Values.cloudse.deployment.imagePull.privateRegistry.dockerRegistry }}
+              {{- $image = ..Values.cloudse.deployment.imagePull.privateRegistry.imageName }}
+              {{- $tag = .Values.cloudse.deployment.imagePull.privateRegistry.imageTag }}
+            {{ end }}
+          {{ end }}
+          {{ if and (not (eq $reg "")) (not (eq $image "")) (not (eq $tag "")) }}
+          image: {{ printf "%s" $reg }}/{{ printf "%s" $image }}{{ printf ":%s" $tag }}
+          {{ end }}
+
+          env:
+            - name: {{ .Values.kubernetes.releaseNamespace.environmentVariable }}
+              value: {{ .Values.kubernetes.releaseNamespace.namespace }}
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - nc -z localhost 
+            initialDelaySeconds: {{ default 100 .Values.cloudse.deployment.spec.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 10 .Values.cloudse.deployment.spec.startupProbe.periodSeconds }}
+            failureThreshold: {{ default 30 .Values.cloudse.deployment.spec.startupProbe.failureThreshold }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - nc -z localhost 9443
+            initialDelaySeconds: {{ default 250 .Values.cloudse.deployment.spec.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 10 .Values.cloudse.deployment.spec.livenessProbe.periodSeconds }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - nc -z localhost 9443
+            initialDelaySeconds: {{ default 250 .Values.cloudse.deployment.spec.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 10 .Values.cloudse.deployment.spec.readinessProbe.periodSeconds }}
+
+          resources:
+            requests:
+              memory: {{ .Values.cloudse.deployment.spec.resources.requests.memory }}
+              cpu: {{ .Values.cloudse.deployment.spec.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.cloudse.deployment.spec.resources.limits.memory }}
+              cpu: {{ .Values.cloudse.deployment.spec.resources.limits.cpu }}
+
+          ports:
+            - containerPort: 9763
+              protocol: TCP
+
+          volumeMounts:
+            - name: {{ .Values.cloudse.deployment.configCm.deploymentVolumeName }}
+              mountPath: /home/path/to/parameters.yaml
+              subPath: parameters.yaml
+
+      volumes:
+      - name: {{ .Values.cloudse.deployment.configCm.deploymentVolumeName }}
+        configMap:
+          name: {{ .Values.cloudse.deployment.configCm.mapname }}
